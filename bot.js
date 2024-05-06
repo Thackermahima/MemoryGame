@@ -12,7 +12,14 @@ const bot = new TelegramBot(token, { polling: true });
 bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id.toString();
     let game = gameManager.initializeGame(chatId);
-    bot.sendMessage(chatId, "Game started!", { /* send initial game state */ });
+    console.log(game); // Log the game state
+    if (!game || !game.board) {
+        bot.sendMessage(chatId, "Failed to start game, please try again.");
+        return;
+    }
+    // Assume generateKeyboard is a function that generates the keyboard layout
+    let keyboard = generateKeyboard(game, chatId);
+    bot.sendMessage(chatId, "Game started! Select two tiles.", { reply_markup: { inline_keyboard: keyboard }});
 });
 
 // Handle moves from inline keyboard callback queries
@@ -61,31 +68,31 @@ bot.on('callback_query', async (callbackQuery) => {
 //     return gameData;
 // }
 
-// function generateKeyboard(gameData, chatId) {
-//     let keyboard = [];
-//     let row = [];
+function generateKeyboard(gameData, chatId) {
+    let keyboard = [];
+    let row = [];
 
-//     gameData.board.forEach((emoji, index) => {
-//         let displayEmoji = "◼️";
-//         if (gameData.matchedPairs.includes(index) || gameData.selections.includes(index)) {
-//             displayEmoji = emoji;
-//         }
-//         row.push({ text: displayEmoji, callback_data: 'select_' + index });
+    gameData.board.forEach((emoji, index) => {
+        let displayEmoji = "◼️";
+        if (gameData.matchedPairs.includes(index) || gameData.selections.includes(index)) {
+            displayEmoji = emoji;
+        }
+        row.push({ text: displayEmoji, callback_data: 'select_' + index });
 
-//         if (row.length === 4) {
-//             keyboard.push(row);
-//             row = []; // Start a new row
-//         }
-//     });
+        if (row.length === 4) {
+            keyboard.push(row);
+            row = []; // Start a new row
+        }
+    });
 
-//     if (row.length > 0) {
-//         keyboard.push(row);
-//     }
+    if (row.length > 0) {
+        keyboard.push(row);
+    }
 
-//     // Add a reset button at the bottom
-//     keyboard.push([{ text: "Reset Game", callback_data: 'reset_game' }]);
-//     return { inline_keyboard: keyboard };
-// }
+    // Add a reset button at the bottom
+    keyboard.push([{ text: "Reset Game", callback_data: 'reset_game' }]);
+    return { inline_keyboard: keyboard };
+}
 
 // bot.onText(/\/start/, (msg) => {
 //     const chatId = msg.chat.id;

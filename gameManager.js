@@ -2,7 +2,7 @@ const games = {};
 
 function initializeGame(gameId) {
     const emojis = ["🔥", "🔥", "😎", "😎", "😸", "😸", "🍔", "🍔", "🍟", "🍟", "🍪", "🍪", "❤️", "❤️", "🚀", "🚀"];
-    emojis.sort(() => Math.random() - 0.5);
+    emojis.sort(() => 0.5 - Math.random());
     games[gameId] = { board: emojis, selections: [], matchedPairs: [] };
     return games[gameId];
 }
@@ -13,6 +13,8 @@ function getGame(gameId) {
 
 function makeMove(gameId, index) {
     let game = games[gameId];
+    console.log(gameId, "gameId");
+    console.log(index, "index");
     if (!game) return null;
 
     // Check if the tile at the index has already been matched

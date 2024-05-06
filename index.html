@@ -67,40 +67,56 @@
             });
 
             function startGame() {
-                fetch('/api/start', { method: 'POST' })
-                    .then(response => response.json())
-                    .then(gameData => renderGame(gameData));
-            }
+    fetch('/api/start', { method: 'POST' })
+    .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+    })
+    .then(gameData => {
+        sessionStorage.setItem('gameId', gameData.gameId);  // Store the gameId
+        renderGame(gameData);
+    })
+    .catch(error => console.error('Fetch error:', error));
+}
 
-            function makeMove(index) {
-                fetch('/api/move', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ index })
-                })
-                .then(response => response.json())
-                .then(gameData => renderGame(gameData));
-            }
+function makeMove(index) {
+    const gameId = sessionStorage.getItem('gameId');  // Retrieve the gameId
+    if (!gameId) {
+        console.error('Game ID is missing');
+        return;
+    }
 
-            function resetGame() {
-                startGame(); // Reset the game
-            }
+    fetch('/api/move', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ gameId, index })
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Failed to process move');
+        return response.json();
+    })
+    .then(gameData => renderGame(gameData))
+    .catch(error => console.error('Move failed:', error));
+}
 
-            function renderGame(gameData) {
+
+function renderGame(gameData) {
+    if (!gameData || !gameData.board) {
+        console.error('Invalid game data:', gameData);
+        return; // Exit the function if game data is not valid
+    }
+
     const gameContainer = document.querySelector('.game');
     gameContainer.innerHTML = ''; // Clear existing tiles
 
     gameData.board.forEach((emoji, index) => {
         let box = document.createElement('div');
         box.className = 'item';
-        box.innerHTML = gameData.selections.includes(index) || gameData.matchedPairs.includes(index) ? emoji : '◼️';
+        box.innerHTML = emoji;
 
-        // Add boxOpen class if the index is in selections
         if (gameData.selections.includes(index)) {
             box.classList.add('boxOpen');
         }
-
-        // Add boxMatch class if the index is in matchedPairs
         if (gameData.matchedPairs.includes(index)) {
             box.classList.add('boxMatch');
         }
@@ -108,10 +124,6 @@
         box.onclick = () => makeMove(index);
         gameContainer.appendChild(box);
     });
-
-    if (gameData.matchedPairs.length === gameData.board.length) {
-        alert('Congratulations! You have matched all pairs!');
-    }
 }
 
         </script>

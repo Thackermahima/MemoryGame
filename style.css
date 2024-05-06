@@ -87,7 +87,6 @@ h2{
  background: #209d7b;
  transition: 0.25s;
  transform: rotateY(0deg);
- /* opacity: 0.25; */
  backface-visibility: hidden;
 }
 .boxOpen:after,
@@ -95,3 +94,4 @@ h2{
  {
     transform: rotateY(180deg);
 }
+
