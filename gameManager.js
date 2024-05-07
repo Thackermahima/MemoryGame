@@ -1,10 +1,15 @@
 const games = {};
 
-function initializeGame(gameId) {
+function initializeGame(chatId) {
     const emojis = ["🔥", "🔥", "😎", "😎", "😸", "😸", "🍔", "🍔", "🍟", "🍟", "🍪", "🍪", "❤️", "❤️", "🚀", "🚀"];
-    emojis.sort(() => 0.5 - Math.random());
-    games[gameId] = { board: emojis, selections: [], matchedPairs: [] };
-    return games[gameId];
+    emojis.sort(() => 0.5 - Math.random());  // Shuffle emojis
+    const gameData = {
+        board: emojis,
+        selections: [],
+        matchedPairs: []
+    };
+    games[chatId] = gameData;
+    return gameData;
 }
 
 function getGame(gameId) {
@@ -13,44 +18,35 @@ function getGame(gameId) {
 
 function makeMove(gameId, index) {
     let game = games[gameId];
-    console.log(gameId, "gameId");
-    console.log(index, "index");
+    console.log(game, "game");
     if (!game) return null;
 
-    // Check if the tile at the index has already been matched
+    let lastMoveMatched = false; // Flag to indicate if the last move was a match
+
     if (game.matchedPairs.includes(index)) {
         return game; // Already matched, nothing to do
     }
 
-    // Adding the index to selections if it's not already added
     if (!game.selections.includes(index)) {
         game.selections.push(index);
     }
 
-    // Check if two tiles are selected
     if (game.selections.length == 2) {
         const [firstIndex, secondIndex] = game.selections;
 
-        // Check if the two selected tiles match
         if (game.board[firstIndex] === game.board[secondIndex]) {
-            // Add to matched pairs
             game.matchedPairs.push(firstIndex, secondIndex);
-
-            // Clear selections for next moves
-            game.selections = [];
-        } else {
-            // If they don't match, clear selections after a short delay
-            // In a backend scenario, you might handle this delay in the frontend or simply reset immediately
-            game.selections = [];
+            lastMoveMatched = true;
         }
+        game.selections = [];
     }
 
-    // Check if the game is over (all pairs are matched)
     if (game.matchedPairs.length === game.board.length / 2) {
         game.isGameOver = true;
     }
 
-    return game;
+    return { ...game, lastMoveMatched };
 }
+
 
 module.exports = { initializeGame, getGame, makeMove };

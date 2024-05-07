@@ -46,7 +46,7 @@
       </script>
     </div>
 </body>
-</html> --> 
+</html>  -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -79,6 +79,10 @@
     .catch(error => console.error('Fetch error:', error));
 }
 
+    function resetGame() {
+            startGame(); // Reset the game
+    }
+
 function makeMove(index) {
     const gameId = sessionStorage.getItem('gameId');  // Retrieve the gameId
     if (!gameId) {
@@ -95,36 +99,63 @@ function makeMove(index) {
         if (!response.ok) throw new Error('Failed to process move');
         return response.json();
     })
-    .then(gameData => renderGame(gameData))
+    .then(gameData => {
+        // If two selections are made and they do not form a match, add a delay
+        if (gameData.selections.length === 0 && gameData.lastMoveMatched === false) {
+            renderGame(gameData, true); // add delay
+        } else {
+            renderGame(gameData);
+        }
+    })
     .catch(error => console.error('Move failed:', error));
 }
 
 
-function renderGame(gameData) {
-    if (!gameData || !gameData.board) {
-        console.error('Invalid game data:', gameData);
-        return; // Exit the function if game data is not valid
-    }
 
+function renderGame(gameData, shouldDelay = false) {
     const gameContainer = document.querySelector('.game');
-    gameContainer.innerHTML = ''; // Clear existing tiles
+    if (shouldDelay) {
+        // Delay clearing the board to allow both selections to be visible
+        setTimeout(() => renderTiles(gameData, gameContainer), 500);
+    } else {
+        renderTiles(gameData, gameContainer);
+    }
+}
 
+function renderTiles(gameData, gameContainer) {
+    gameContainer.innerHTML = ''; // Clear existing tiles
     gameData.board.forEach((emoji, index) => {
         let box = document.createElement('div');
         box.className = 'item';
         box.innerHTML = emoji;
 
-        if (gameData.selections.includes(index)) {
-            box.classList.add('boxOpen');
-        }
-        if (gameData.matchedPairs.includes(index)) {
-            box.classList.add('boxMatch');
-        }
+      
+        box.onclick = function() {
+            this.classList.add('boxOpen')
+           setTimeout(function(){
+                if(document.querySelectorAll('.boxOpen').length > 1){
+                    if(document.querySelectorAll('.boxOpen')[0].innerHTML ==
+                    document.querySelectorAll('.boxOpen')[1].innerHTML){
+                        document.querySelectorAll('.boxOpen')[0].classList.add('boxMatch')
+                        document.querySelectorAll('.boxOpen')[1].classList.add('boxMatch')
+                        document.querySelectorAll('.boxOpen')[1].classList.remove('boxOpen') 
+                        document.querySelectorAll('.boxOpen')[0].classList.remove('boxOpen')
+                        if(document.querySelectorAll('.boxMatch').length == gameData.board.length){
+                            alert('win');
+                        }
+                    } else {
+                        document.querySelectorAll('.boxOpen')[1].classList.remove('boxOpen')
+                        document.querySelectorAll('.boxOpen')[0].classList.remove('boxOpen')
+                    }
+                }
 
-        box.onclick = () => makeMove(index);
-        gameContainer.appendChild(box);
-    });
-}
+           }, 500)
+        }
+        document.querySelector('.game').appendChild(box);
+    
+} 
+)}
+
 
         </script>
     </div>
