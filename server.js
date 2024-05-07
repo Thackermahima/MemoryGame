@@ -62,69 +62,97 @@ bot.onText(/\/start/, (msg) => {
     console.log("Received /start command from user:", msg.from.id);
     const chatId = msg.chat.id.toString();
     let game = gameManager.initializeGame(chatId);
-    console.log(game);
+    console.log(game, "game");
+    console.log(game[chatId], "game[chatId]");
     bot.sendMessage(chatId, 'Memory Game started! Select two tiles.', {
-                reply_markup: generateKeyboard(game[chatId], chatId)
+                reply_markup: generateKeyboard(game, chatId)
             });
 });
-
 
 bot.on('callback_query', (callbackQuery) => {
     const chatId = callbackQuery.message.chat.id.toString();
+    const msg = callbackQuery.message;
     const index = parseInt(callbackQuery.data.split('_')[1]);
-    if (isNaN(index)) {
-        if (callbackQuery.data === 'reset_game') {
-            let game = gameManager.initializeGame(chatId);
-            let keyboard = generateKeyboard(game, chatId);
-            bot.sendMessage(chatId, "Game started! Select two tiles.", {
-                reply_markup: generateKeyboard(game, chatId)
-            });
-            
-        }
-    } else {
+
+    if (!isNaN(index)) {
         const gameData = gameManager.makeMove(chatId, index);
-        console.log(gameData, "gameData");
+
         if (gameData.isGameOver) {
-            console.log(gameData.isGameOver, "GameData.isGameOver");
-            bot.sendMessage(chatId, "Congratulations! You have matched all pairs!");
-        } else {
-            let keyboard = generateKeyboard(gameData, chatId);
-            console.log(keyboard, "keyboard");
-            bot.editMessageText("Updated game state", {
+             // First update the keyboard with the final matched pair
+             const keyboard = generateKeyboard(gameData, chatId);
+             bot.editMessageReplyMarkup({ inline_keyboard: keyboard.inline_keyboard }, {
+                 chat_id: chatId,
+                 message_id:  msg.message_id
+             }).then(() => {
+                 // Delay the congratulations message to let the user see the matched pair
+                 setTimeout(() => {
+                     bot.sendMessage(chatId, "Congratulations! You have matched all pairs!");
+                 }, 500);  // Adjust delay as needed
+             });
+        } else if (gameData.resetNeeded) {
+            // Update with selected tiles first
+            let tempKeyboard = generateKeyboard({ ...gameData, selections: gameData.selections }, chatId);
+            bot.editMessageReplyMarkup({ inline_keyboard: tempKeyboard.inline_keyboard }, {
                 chat_id: chatId,
-                message_id: callbackQuery.message.message_id,
-                reply_markup: { inline_keyboard: keyboard }
+                message_id: msg.message_id
+            }).then(() => {
+                // After a brief delay, reset the view
+                                    setTimeout(() => {
+                                        gameData.selections = [];
+                                        bot.editMessageReplyMarkup({
+                                            inline_keyboard: generateKeyboard(gameData, chatId).inline_keyboard
+                                        }, {
+                                            chat_id: chatId,
+                                            message_id: msg.message_id
+                                        });
+                                    }, 300);
+                                
             });
+        } else {
+            bot.editMessageReplyMarkup({
+                            inline_keyboard: generateKeyboard(gameData, chatId).inline_keyboard
+                        }, {
+                            chat_id: chatId,
+                            message_id: msg.message_id
+                        });
+                    
         }
+    } else if (callbackQuery.data === 'reset_game') {
+        const gameData = gameManager.initializeGame(chatId);  // Reset the game
+        const keyboard = generateKeyboard(gameData, chatId);
+        bot.editMessageText("Game restarted! Select two tiles.", {
+            chat_id: chatId,
+            message_id: msg.message_id,
+            reply_markup: { inline_keyboard: keyboard.inline_keyboard }
+        });
     }
 });
+
+
 
 function generateKeyboard(gameData, chatId) {
     let keyboard = [];
     let row = [];
 
     gameData.board.forEach((emoji, index) => {
-        let displayEmoji = gameData.matchedPairs.includes(index) || gameData.selections.includes(index) ? emoji : "◼️";
-        
-        // Append current tile to the row
-        row.push({ text: displayEmoji, callback_data: `select_${index}` });
+        let displayEmoji = "◼️";
+        if (gameData.matchedPairs.includes(index) || gameData.selections.includes(index)) {
+            displayEmoji = emoji;
+        }
+        row.push({ text: displayEmoji, callback_data: 'select_' + index });
 
-        // If row has 4 tiles, push it to the keyboard and reset the row
         if (row.length === 4) {
             keyboard.push(row);
-            row = [];
+            row = []; // Start a new row
         }
     });
 
-    // If there's an incomplete row, add it to the keyboard
     if (row.length > 0) {
         keyboard.push(row);
     }
 
-    // Add a reset button on a new line
+    // Add a reset button at the bottom
     keyboard.push([{ text: "Reset Game", callback_data: 'reset_game' }]);
-
-    console.log("Generated Keyboard:", JSON.stringify(keyboard));
     return { inline_keyboard: keyboard };
 }
 
