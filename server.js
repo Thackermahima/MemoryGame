@@ -10,7 +10,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname)));
 
 // Start the server
 app.listen(port, () => {
@@ -24,7 +24,7 @@ app.use(bodyParser.json());
 
 // Route to ensure index.html is served from the correct location
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'Index.html'));
+    res.sendFile(path.join(__dirname,  'Index.html'));
 });
 
 // API to start a new game
