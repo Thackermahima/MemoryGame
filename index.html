@@ -83,34 +83,6 @@
             startGame(); // Reset the game
     }
 
-function makeMove(index) {
-    const gameId = sessionStorage.getItem('gameId');  // Retrieve the gameId
-    if (!gameId) {
-        console.error('Game ID is missing');
-        return;
-    }
-
-    fetch('/api/move', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ gameId, index })
-    })
-    .then(response => {
-        if (!response.ok) throw new Error('Failed to process move');
-        return response.json();
-    })
-    .then(gameData => {
-        // If two selections are made and they do not form a match, add a delay
-        if (gameData.selections.length === 0 && gameData.lastMoveMatched === false) {
-            renderGame(gameData, true); // add delay
-        } else {
-            renderGame(gameData);
-        }
-    })
-    .catch(error => console.error('Move failed:', error));
-}
-
-
 
 function renderGame(gameData, shouldDelay = false) {
     const gameContainer = document.querySelector('.game');
