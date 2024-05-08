@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const path = require('path');
 const gameManager = require('./gameManager');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -9,7 +10,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
-app.use(express.static(__dirname)); // Serves your index.html and static files
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Start the server
 app.listen(port, () => {
@@ -23,7 +24,7 @@ app.use(bodyParser.json());
 
 // Route to ensure index.html is served from the correct location
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname));  // Adjust path based on your directory structure
+    res.sendFile(path.join(__dirname, 'public', 'Index.html'));
 });
 
 // API to start a new game
