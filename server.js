@@ -24,7 +24,7 @@ app.use(bodyParser.json());
 
 // Route to ensure index.html is served from the correct location
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname,  'Index.html'));
+    res.sendFile(path.join(__dirname));
 });
 
 // API to start a new game
