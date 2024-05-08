@@ -52,6 +52,7 @@ h2{
 
 }
 
+
 .game{
   width: 433px;
   height: 430px;
@@ -62,6 +63,7 @@ h2{
   perspective: 500px;
 }
 
+
 .item{
     position: relative;
     width: 100px;
@@ -71,13 +73,15 @@ h2{
     align-items: center;
     background: #fff;
     font-size: 3em;
-    /* transition: 0.25ms;
-    transform: rotateY(180deg); */
+    transition: 0.25ms;
+    transform: rotateY(180deg); 
 }
+
 
 .item.boxOpen {
     transform: rotateY(0deg);
  }
+
 
 .item::after
 {
@@ -85,10 +89,11 @@ h2{
  position: absolute;
  inset: 0;
  background: #209d7b;
- /* transition: 0.25s;
- transform: rotateY(0deg); */
+ transition: 0.25s;
+ transform: rotateY(0deg);
  backface-visibility: hidden;
 }
+
 .boxOpen:after,
 .boxMatch:after
  {
