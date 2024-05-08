@@ -71,8 +71,8 @@ h2{
     align-items: center;
     background: #fff;
     font-size: 3em;
-    transition: 0.25ms;
-    transform: rotateY(180deg);
+    /* transition: 0.25ms;
+    transform: rotateY(180deg); */
 }
 
 .item.boxOpen {
@@ -85,8 +85,8 @@ h2{
  position: absolute;
  inset: 0;
  background: #209d7b;
- transition: 0.25s;
- transform: rotateY(0deg);
+ /* transition: 0.25s;
+ transform: rotateY(0deg); */
  backface-visibility: hidden;
 }
 .boxOpen:after,

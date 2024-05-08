@@ -62,7 +62,7 @@ const { Telegraf } = require("telegraf");
 const TOKEN = process.env.TELEGRAM_BOT_API;
 const bot = new Telegraf(TOKEN);
 
-const web_link = "";
+const web_link = "https://memory-game-sooty-rho.vercel.app/";
 
 bot.start((ctx) =>
   ctx.reply("Welcome..!!!!!!!!", {
