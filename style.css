@@ -64,7 +64,7 @@ h2{
 }
 
 
- .item{
+.item {
     position: relative;
     width: 100px;
     height: 100px;
@@ -73,31 +73,32 @@ h2{
     align-items: center;
     background: #fff;
     font-size: 3em;
-    /* transition: 0.25ms; */
-    transform: rotateY(180deg); 
+    transition: transform 0.3s, visibility 0s 0.3s, opacity 0.3s ease; /* Add transitions for visibility and opacity */
+    transform: rotateY(180deg); /* Initially rotated to hide the front face */
+    visibility: hidden; /* Initially hidden */
+    opacity: 0; /* Initially fully transparent */
 }
 
-
-.item.boxOpen {
-    transform: rotateY(0deg);
- }
-
-
-.item::after
-{
- content: '';
- position: absolute;
- inset: 0;
- background: #209d7b;
- transition: 0.25s;
- transform: rotateY(0deg);
- backface-visibility: hidden;
+.item.boxOpen, .item.boxMatch {
+    transform: rotateY(0deg); /* Rotate to show the front face */
+    visibility: visible; /* Make visible */
+    opacity: 1; /* Fully opaque */
+    transition: transform 0.3s, visibility 0s, opacity 0.3s ease; /* Adjust the transition timing */
 }
 
-.boxOpen:after,
-.boxMatch:after
- {
-    transform: rotateY(180deg);
-} 
+.item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #209d7b;
+    transition: background 0.3s ease;
+    transform: rotateY(180deg); /* Rotate to hide initially */
+    visibility: hidden; /* Hidden initially */
+    opacity: 0; /* Fully transparent initially */
+}
 
-
+.boxOpen::after, .boxMatch::after {
+    transform: rotateY(0deg); /* Rotate to show */
+    visibility: visible; /* Make visible */
+    opacity: 1; /* Fully opaque */
+}
