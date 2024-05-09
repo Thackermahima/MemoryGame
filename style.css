@@ -94,16 +94,16 @@ h2{
  background: #209d7b;
  /* transition: 0.25s;
  transform: rotateY(0deg); */
- opacity: 0;  /* Start hidden */
- visibility: hidden; /* Not visible initially */
+ opacity: 1;  /* Start hidden */
+ visibility: visible; /* Not visible initially */
  transition: opacity 0.5s, visibility 0.5s;
 
 }
 
 .item.boxOpen::after,
 .item.boxMatch::after {
-    opacity: 1; /* Make visible */
-    visibility: visible; /* Make visible */
+    opacity: 0; /* Make visible */
+    visibility: hidden; /* Make visible */
 }
 
 .item.boxOpen, .item.boxMatch {
