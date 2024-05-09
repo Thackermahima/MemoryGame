@@ -96,7 +96,7 @@ h2{
  transform: rotateY(0deg); */
  opacity: 1;  /* Start hidden */
  visibility: visible; /* Not visible initially */
- transition: opacity 0.5s, visibility 0.25s;
+ transition: visibility 0.25s;
 
 }
 
@@ -106,7 +106,7 @@ h2{
     visibility: hidden; /* Make visible */
 }
 
-.item.boxOpen, .item.boxMatch {
+.item.boxOpen {
     transform: rotateY(0deg); /* Rotate to show the emoji */
 }
 
