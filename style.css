@@ -73,8 +73,10 @@ h2{
     align-items: center;
     background: #fff;
     font-size: 3em;
-    transition: 0.25ms;
+    /* transition: 0.25ms; */
     transform: rotateY(180deg); 
+    transition: transform 0.5s;
+
 }
 
 
@@ -104,6 +106,9 @@ h2{
     visibility: visible; /* Make visible */
 }
 
+.item.boxOpen, .item.boxMatch {
+    transform: rotateY(0deg); /* Rotate to show the emoji */
+}
 
 .boxOpen:after,
 .boxMatch:after
