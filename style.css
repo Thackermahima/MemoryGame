@@ -96,7 +96,7 @@ h2{
  transform: rotateY(0deg); */
  opacity: 1;  /* Start hidden */
  visibility: visible; /* Not visible initially */
- transition: opacity 0.5s, visibility 0.5s;
+ transition: opacity 0.5s, visibility 0.25s;
 
 }
 
