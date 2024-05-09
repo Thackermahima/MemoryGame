@@ -91,12 +91,14 @@ h2{
  background: #209d7b;
  transition: 0.25s;
  transform: rotateY(0deg);
- /* backface-visibility: hidden; */
+ visibility: visible;
+  /* backface-visibility: hidden; */
 }
 
 .boxOpen:after,
 .boxMatch:after
  {
+    visibility: hidden;
     transform: rotateY(180deg);
 } 
 
