@@ -104,14 +104,11 @@ h2{
     visibility: visible; /* Make visible */
 }
 
-.boxMatch::after {
-    background-color: green; /* Indicate a match */
-}
 
-/* .boxOpen:after,
+.boxOpen:after,
 .boxMatch:after
  {
     transform: rotateY(180deg);
-}  */
+} 
 
 
