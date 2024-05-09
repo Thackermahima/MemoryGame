@@ -64,7 +64,7 @@ h2{
 }
 
 
- /* .item{
+ .item{
     position: relative;
     width: 100px;
     height: 100px;
@@ -91,13 +91,13 @@ h2{
  background: #209d7b;
  transition: 0.25s;
  transform: rotateY(0deg);
- backface-visibility: hidden;
-} */
+ /* backface-visibility: hidden; */
+}
 
-/* .boxOpen:after,
+.boxOpen:after,
 .boxMatch:after
  {
     transform: rotateY(180deg);
-}  */
+} 
 
 
